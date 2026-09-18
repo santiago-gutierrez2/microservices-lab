@@ -1,0 +1,36 @@
+.catalog {
+  max-width: 720px;
+  margin: 2rem auto;
+  font-family: system-ui, sans-serif;
+}
+
+.hint {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.error {
+  color: #b00020;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 2rem;
+}
+
+th, td {
+  text-align: left;
+  padding: 0.5rem;
+  border-bottom: 1px solid #ddd;
+}
+
+.product-form {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.product-form input {
+  padding: 0.4rem;
+}

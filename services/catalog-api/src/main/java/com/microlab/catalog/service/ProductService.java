@@ -26,12 +26,14 @@ public class ProductService {
     }
 
     public Product create(Product product) {
-        return repository.save(new Product(null, product.name(), product.description(), product.price(), product.stock()));
+        product.setId(null);
+        return repository.save(product);
     }
 
     public void delete(Long id) {
-        if (!repository.deleteById(id)) {
+        if (!repository.existsById(id)) {
             throw new NoSuchElementException("Producto no encontrado: " + id);
         }
+        repository.deleteById(id);
     }
 }

@@ -38,7 +38,7 @@ public class ProductController {
     public ResponseEntity<Product> create(@Valid @RequestBody ProductRequest request) {
         Product created = service.create(
                 new Product(null, request.name(), request.description(), request.price(), request.stock()));
-        return ResponseEntity.created(URI.create("/api/products/" + created.id())).body(created);
+        return ResponseEntity.created(URI.create("/api/products/" + created.getId())).body(created);
     }
 
     @DeleteMapping("/{id}")

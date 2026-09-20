@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: catalog-api
+  datasource:
+    url: jdbc:postgresql://localhost:5433/catalogdb
+    username: catalog_user
+    password: catalog_pass
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+server:
+  port: 8080

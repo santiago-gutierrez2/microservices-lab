@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
-import { ProductList } from './features/products/product-list/product-list';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 @Component({
-  imports: [ProductList],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive],
   selector: 'app-root',
   styleUrl: './app.scss',
   templateUrl: './app.html',

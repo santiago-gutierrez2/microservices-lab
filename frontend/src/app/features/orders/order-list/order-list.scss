@@ -1,0 +1,45 @@
+.orders {
+  max-width: 720px;
+  margin: 2rem auto;
+  font-family: system-ui, sans-serif;
+}
+
+.hint {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.error {
+  color: #b00020;
+}
+
+.warning {
+  color: #8a5a00;
+  background: #fff4d6;
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 2rem;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 0.5rem;
+  border-bottom: 1px solid #ddd;
+}
+
+.order-form {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.order-form select,
+.order-form input {
+  padding: 0.4rem;
+}

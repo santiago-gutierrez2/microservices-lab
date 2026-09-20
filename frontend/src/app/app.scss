@@ -1,0 +1,20 @@
+.main-nav {
+  display: flex;
+  gap: 1rem;
+  max-width: 720px;
+  margin: 1rem auto 0;
+  font-family: system-ui, sans-serif;
+
+  a {
+    text-decoration: none;
+    color: #555;
+    padding: 0.3rem 0.6rem;
+    border-radius: 4px;
+
+    &.active {
+      background: #e8eefc;
+      color: #1a3a8f;
+      font-weight: 600;
+    }
+  }
+}

@@ -7,7 +7,7 @@ import { Product, ProductRequest } from '../models/product.model';
 @Service()
 export class ProductService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = `${environment.apiBaseUrl}/products`;
+  private readonly baseUrl = `${environment.catalogApiUrl}/products`;
 
   findAll(): Observable<Product[]> {
     return this.http.get<Product[]>(this.baseUrl);

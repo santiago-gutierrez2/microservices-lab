@@ -1,0 +1,75 @@
+<section class="orders">
+  <h1>Pedidos</h1>
+  <p class="hint">
+    Pedidos de <code>order-service</code> (<code>localhost:8081</code>); los nombres de producto
+    se cruzan en el navegador con <code>catalog-service</code> (<code>localhost:8080</code>).
+  </p>
+
+  @if (productsError(); as message) {
+    <p class="warning">{{ message }}</p>
+  }
+
+  @if (ordersLoading()) {
+    <p>Cargando...</p>
+  } @else if (ordersError(); as message) {
+    <p class="error">{{ message }}</p>
+  } @else {
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Producto</th>
+          <th>Cantidad</th>
+          <th>Precio unit.</th>
+          <th>Total</th>
+          <th>Fecha</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (order of ordersView(); track order.id) {
+          <tr>
+            <td>{{ order.id }}</td>
+            <td>{{ order.productName }}</td>
+            <td>{{ order.quantity }}</td>
+            <td>{{ order.unitPrice | currency }}</td>
+            <td>{{ order.total | currency }}</td>
+            <td>{{ order.createdDate | date: 'short' }}</td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="6">Aún no hay pedidos.</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+
+  <h2>Nuevo pedido</h2>
+  <form (ngSubmit)="createOrder()" class="order-form">
+    <select
+      name="product"
+      [ngModel]="selectedProductId()"
+      (ngModelChange)="selectedProductId.set($event)"
+      [disabled]="products().length === 0"
+      required
+    >
+      <option [ngValue]="null" disabled>Elige un producto</option>
+      @for (product of products(); track product.id) {
+        <option [ngValue]="product.id">{{ product.name }} ({{ product.price | currency }})</option>
+      }
+    </select>
+    <input
+      name="quantity"
+      type="number"
+      min="1"
+      [ngModel]="quantity()"
+      (ngModelChange)="quantity.set($event)"
+      required
+    />
+    <button type="submit" [disabled]="!selectedProduct() || quantity() < 1">Crear pedido</button>
+  </form>
+
+  @if (createError(); as message) {
+    <p class="error">{{ message }}</p>
+  }
+</section>

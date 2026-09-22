@@ -23,6 +23,19 @@ services:
     volumes:
       - order-db-data:/var/lib/postgresql/data
 
+  catalog-api:
+    container_name: catalog-api
+    build:
+      context: ./services/catalog-api
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://catalog-db:5432/catalogdb
+      SPRING_DATASOURCE_USERNAME: catalog_user
+      SPRING_DATASOURCE_PASSWORD: catalog_pass
+    ports:
+      - "8080:8080"
+    depends_on:
+      - catalog-db
+
 volumes:
   catalog-db-data:
   order-db-data:

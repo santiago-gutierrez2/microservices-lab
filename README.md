@@ -9,7 +9,7 @@ este mismo repositorio.
 
 - [x] **Fase 0 — Base**: monolito simple. Un servicio Spring Boot
       (`catalog-api`) con datos en memoria, consumido por una app Angular.
-- [~] **Fase 1 — Descomponer en microservicios**: separar en varios
+- [x] **Fase 1 — Descomponer en microservicios**: separar en varios
       servicios, cada uno con su propia base de datos PostgreSQL
       (*database per service*), todo orquestado con `docker-compose`.
 - [ ] **Fase 2 — Comunicación entre servicios**: síncrona (OpenFeign /
@@ -38,21 +38,19 @@ microservices-lab/
 
 ## Cómo correrlo (Fase 1)
 
-Primero las bases de datos (una por servicio):
+Backend completo (bases de datos + `catalog-api` + `order-service`, cada uno en su propio contenedor):
 
 ```bash
-docker compose up -d
-```
-
-
-Backend (un terminal por servicio: `catalog-api` en 8080 y `order-service` en 8081):
-
-```bash
-cd services/<servicio>
-./mvnw spring-boot:run
+docker compose up -d --build
 ```
 
 `catalog-api`: `GET /api/products` (8080). `order-service`: `GET/POST /api/orders` (8081).
+
+Alternativa para desarrollar un servicio suelto sin reconstruir su imagen: levanta solo su base
+(`docker compose up -d catalog-db`) y corre el servicio con `./mvnw spring-boot:run` desde
+`services/<servicio>` — la config por defecto en `application.yaml` usa el puerto publicado en
+el host (`localhost:5433`/`5434`); dentro de Compose se sobreescribe por variables de entorno
+(`SPRING_DATASOURCE_*`) apuntando al nombre del contenedor (`catalog-db:5432`).
 
 Frontend:
 

@@ -36,6 +36,19 @@ services:
     depends_on:
       - catalog-db
 
+  order-api:
+    container_name: order-api
+    build:
+      context: ./services/order-service
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://order-db:5432/orderdb
+      SPRING_DATASOURCE_USERNAME: order_user
+      SPRING_DATASOURCE_PASSWORD: order_pass
+    ports:
+      - "8081:8081"
+    depends_on:
+      - order-db
+
 volumes:
   catalog-db-data:
   order-db-data:

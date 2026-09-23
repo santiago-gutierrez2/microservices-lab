@@ -21,5 +21,4 @@ public class Order {
     private BigDecimal unitPrice;
     @CreationTimestamp
     private Instant createdDate;
-
 }

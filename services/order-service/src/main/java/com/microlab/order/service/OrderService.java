@@ -16,6 +16,7 @@ import tools.jackson.databind.ObjectMapper;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.UUID;
 
 @Service
 @Transactional
@@ -55,7 +56,7 @@ public class OrderService {
         OutboxEvent outboxEvent = new OutboxEvent();
         outboxEvent.setEventType("OrderCreated");
         outboxEvent.setPayload(objectMapper.writeValueAsString(
-                new OrderCreatedEvent(created.getId(), created.getProductId(), created.getQuantity())));
+                new OrderCreatedEvent(UUID.randomUUID(), created.getId(), created.getProductId(), created.getQuantity())));
         // Misma transaccion que el save de arriba: o se guardan las dos filas, o ninguna.
         outboxEventRepository.save(outboxEvent);
 

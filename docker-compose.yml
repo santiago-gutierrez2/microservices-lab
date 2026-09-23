@@ -31,10 +31,12 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://catalog-db:5432/catalogdb
       SPRING_DATASOURCE_USERNAME: catalog_user
       SPRING_DATASOURCE_PASSWORD: catalog_pass
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:19092
     ports:
       - "8080:8080"
     depends_on:
       - catalog-db
+      - kafka
 
   order-api:
     container_name: order-api

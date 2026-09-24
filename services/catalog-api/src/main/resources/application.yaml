@@ -10,6 +10,9 @@ spring:
       ddl-auto: update
   kafka:
     bootstrap-servers: localhost:9092
+    consumer:
+      auto-offset-reset: earliest
+      group-id: catalog-service
 
 server:
   port: 8080

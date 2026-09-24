@@ -9,9 +9,9 @@ import com.microlab.order.repository.OutboxEventRepository;
 import com.microlab.order.service.input.OrderRequest;
 import com.microlab.order.service.output.OrderCreatedEvent;
 import feign.FeignException;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tools.jackson.databind.ObjectMapper;
 
 import java.util.List;

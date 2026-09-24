@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Component
+@Transactional
 @RequiredArgsConstructor
 public class OutboxEventRelay {
     private final OutboxEventRepository outboxEventRepository;

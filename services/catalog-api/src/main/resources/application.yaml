@@ -14,5 +14,14 @@ spring:
       auto-offset-reset: earliest
       group-id: catalog-service
 
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+  instance:
+    # Sin esto, Eureka registra el hostname del contenedor, que otros
+    # contenedores no siempre pueden resolver. Con la IP real, siempre funciona.
+    prefer-ip-address: true
+
 server:
   port: 8080

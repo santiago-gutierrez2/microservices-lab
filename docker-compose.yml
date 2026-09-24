@@ -32,11 +32,13 @@ services:
       SPRING_DATASOURCE_USERNAME: catalog_user
       SPRING_DATASOURCE_PASSWORD: catalog_pass
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:19092
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka
     ports:
       - "8080:8080"
     depends_on:
       - catalog-db
       - kafka
+      - eureka-server
 
   order-api:
     container_name: order-api
@@ -46,14 +48,15 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://order-db:5432/orderdb
       SPRING_DATASOURCE_USERNAME: order_user
       SPRING_DATASOURCE_PASSWORD: order_pass
-      CATALOG_SERVICE_URL: http://catalog-api:8080/api
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:19092
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka
     ports:
       - "8081:8081"
     depends_on:
       - order-db
       - catalog-api
       - kafka
+      - eureka-server
 
   eureka-server:
     container_name: eureka-server

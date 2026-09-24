@@ -65,6 +65,17 @@ services:
     ports:
       - "8761:8761"
 
+  config-server:
+    container_name: config-server
+    build:
+      context: ./services/config-server
+    environment:
+      CONFIG_REPO_PATH: /config-repo
+    volumes:
+      - ./config-repo:/config-repo:ro
+    ports:
+      - "8888:8888"
+
   kafka:
     image: apache/kafka:latest
     container_name: kafka

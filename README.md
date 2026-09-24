@@ -12,8 +12,10 @@ este mismo repositorio.
 - [x] **Fase 1 — Descomponer en microservicios**: separar en varios
       servicios, cada uno con su propia base de datos PostgreSQL
       (*database per service*), todo orquestado con `docker-compose`.
-- [ ] **Fase 2 — Comunicación entre servicios**: síncrona (OpenFeign /
-      WebClient) y asíncrona (Kafka, patrón outbox).
+- [x] **Fase 2 — Comunicación entre servicios**: síncrona (`order-service`
+      valida productos contra `catalog-api` vía Feign) y asíncrona
+      (Kafka, patrón Outbox en el productor + Inbox idempotente en el
+      consumidor).
 - [ ] **Fase 3 — Descubrimiento y configuración centralizada**: Spring
       Cloud Netflix Eureka (o Consul) + Spring Cloud Config.
 - [ ] **Fase 4 — API Gateway**: Spring Cloud Gateway como puerta de
@@ -32,11 +34,16 @@ este mismo repositorio.
 microservices-lab/
 ├── frontend/            # Angular 22, standalone components + signals
 └── services/
-    ├── catalog-api/     # Productos — Spring Boot, PostgreSQL (catalog-db, :5433), puerto 8080
-    └── order-service/   # Pedidos — Spring Boot, PostgreSQL (order-db, :5434), puerto 8081
+    ├── catalog-api/     # Productos — Spring Boot, PostgreSQL (catalog-db, :5433), puerto 8080.
+    │                    # Consume order-events de Kafka y descuenta stock (patron Inbox).
+    └── order-service/   # Pedidos — Spring Boot, PostgreSQL (order-db, :5434), puerto 8081.
+                         # Valida productos via Feign contra catalog-api y publica
+                         # OrderCreated en Kafka (patron Outbox).
 ```
 
-## Cómo correrlo (Fase 1)
+Kafka (KRaft, un solo broker) corre como parte del `docker-compose`, topic `order-events`.
+
+## Cómo correrlo (Fase 2)
 
 Backend completo (bases de datos + `catalog-api` + `order-service`, cada uno en su propio contenedor):
 

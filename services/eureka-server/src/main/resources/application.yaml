@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: eureka-server
+
+server:
+  port: 8761
+
+eureka:
+  client:
+    # Este propio servidor no necesita registrarse como cliente de si mismo.
+    register-with-eureka: false
+    fetch-registry: false
+  server:
+    # En un cluster real de varios nodos Eureka, no lo desactives: protege
+    # el registro durante particiones de red reales. Con un solo nodo de
+    # desarrollo, solo retrasa la baja de instancias muertas.
+    enable-self-preservation: false

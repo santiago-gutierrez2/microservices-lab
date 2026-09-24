@@ -55,6 +55,13 @@ services:
       - catalog-api
       - kafka
 
+  eureka-server:
+    container_name: eureka-server
+    build:
+      context: ./services/eureka-server
+    ports:
+      - "8761:8761"
+
   kafka:
     image: apache/kafka:latest
     container_name: kafka

@@ -28,28 +28,29 @@ services:
     build:
       context: ./services/catalog-api
     environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_CONFIG_IMPORT: optional:configserver:http://config-server:8888
       SPRING_DATASOURCE_URL: jdbc:postgresql://catalog-db:5432/catalogdb
       SPRING_DATASOURCE_USERNAME: catalog_user
       SPRING_DATASOURCE_PASSWORD: catalog_pass
-      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:19092
-      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka
     ports:
       - "8080:8080"
     depends_on:
       - catalog-db
       - kafka
       - eureka-server
+      - config-server
 
   order-api:
     container_name: order-api
     build:
       context: ./services/order-service
     environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_CONFIG_IMPORT: optional:configserver:http://config-server:8888
       SPRING_DATASOURCE_URL: jdbc:postgresql://order-db:5432/orderdb
       SPRING_DATASOURCE_USERNAME: order_user
       SPRING_DATASOURCE_PASSWORD: order_pass
-      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:19092
-      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka
     ports:
       - "8081:8081"
     depends_on:
@@ -57,6 +58,7 @@ services:
       - catalog-api
       - kafka
       - eureka-server
+      - config-server
 
   eureka-server:
     container_name: eureka-server

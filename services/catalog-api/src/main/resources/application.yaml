@@ -1,6 +1,11 @@
 spring:
   application:
     name: catalog-api
+  # "optional:" para que el servicio arranque igual si config-server no
+  # responde (con lo que ya tenga localmente); sin ese prefijo, un fallo
+  # al pedir la config detendria el arranque por completo.
+  config:
+    import: optional:configserver:http://localhost:8888
   datasource:
     url: jdbc:postgresql://localhost:5433/catalogdb
     username: catalog_user
@@ -9,19 +14,9 @@ spring:
     hibernate:
       ddl-auto: update
   kafka:
-    bootstrap-servers: localhost:9092
     consumer:
       auto-offset-reset: earliest
       group-id: catalog-service
-
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:8761/eureka
-  instance:
-    # Sin esto, Eureka registra el hostname del contenedor, que otros
-    # contenedores no siempre pueden resolver. Con la IP real, siempre funciona.
-    prefer-ip-address: true
 
 server:
   port: 8080

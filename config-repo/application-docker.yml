@@ -1,0 +1,10 @@
+# Sobreescribe application.yml solo para clientes que arrancan con
+# SPRING_PROFILES_ACTIVE=docker (o sea, dentro de docker-compose).
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka-server:8761/eureka
+
+spring:
+  kafka:
+    bootstrap-servers: kafka:19092

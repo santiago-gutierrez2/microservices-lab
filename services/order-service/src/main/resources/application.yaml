@@ -1,6 +1,8 @@
 spring:
   application:
     name: order-service
+  config:
+    import: optional:configserver:http://localhost:8888
   datasource:
     url: jdbc:postgresql://localhost:5434/orderdb
     username: order_user
@@ -8,15 +10,6 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-  kafka:
-    bootstrap-servers: localhost:9092
-
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:8761/eureka
-  instance:
-    prefer-ip-address: true
 
 server:
   port: 8081

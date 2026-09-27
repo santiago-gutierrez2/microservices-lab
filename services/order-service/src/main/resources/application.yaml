@@ -10,10 +10,28 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+  cloud:
+    openfeign:
+      circuitbreaker:
+        enabled: true
 
-feign:
+resilience4j:
+  timelimiter:
+    instances:
+      catalog-api:
+        timeout-duration: 2s
+  retry:
+    instances:
+      catalog-api:
+        max-attempts: 3
+        wait-duration: 200ms
   circuitbreaker:
-    enabled: true
+    instances:
+      catalog-api:
+        sliding-window-size: 10
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 10s
+        permitted-number-of-calls-in-half-open-state: 3
 
 server:
   port: 8081

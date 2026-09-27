@@ -8,7 +8,6 @@ import com.microlab.order.repository.OrderRepository;
 import com.microlab.order.repository.OutboxEventRepository;
 import com.microlab.order.service.input.OrderRequest;
 import com.microlab.order.service.output.OrderCreatedEvent;
-import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,11 +39,9 @@ public class OrderService {
 
     public Order create(OrderRequest request) {
         ProductResponse productResponse;
-        try {
-            productResponse = catalogClient.getProduct(request.productId());
-        } catch (FeignException.NotFound e) {
-            throw new NoSuchElementException("Producto no encontrado: " + request.productId());
-        }
+
+        productResponse = catalogClient.getProduct(request.productId());
+
         Order order = new Order();
         order.setProductId(request.productId());
         order.setQuantity(request.quantity());

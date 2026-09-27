@@ -20,8 +20,10 @@ este mismo repositorio.
       (catalog-api/order-service se descubren por nombre, Feign ya no usa
       URLs fijas) + Spring Cloud Config (backend nativo, config compartida
       en `config-repo/`, con overrides por perfil `docker`).
-- [ ] **Fase 4 — API Gateway**: Spring Cloud Gateway como puerta de
-      entrada única para el frontend.
+- [x] **Fase 4 — API Gateway**: Spring Cloud Gateway (variante Server
+      MVC, servlet, no reactiva) enruta por nombre de servicio vía Eureka
+      (`lb://`); CORS centralizado ahí; el frontend ya solo conoce el
+      Gateway.
 - [ ] **Fase 5 — Resiliencia**: Resilience4j (circuit breaker, retry,
       rate limiter).
 - [ ] **Fase 6 — Observabilidad**: trazabilidad distribuida, métricas,
@@ -34,9 +36,11 @@ este mismo repositorio.
 
 ```
 microservices-lab/
-├── frontend/            # Angular 22, standalone components + signals
+├── frontend/            # Angular 22, standalone components + signals. Solo conoce el gateway.
 ├── config-repo/         # Config compartida servida por config-server (backend nativo)
 └── services/
+    ├── gateway/         # API Gateway (Spring Cloud Gateway Server MVC), puerto 8082.
+    │                    # Unico punto de entrada del frontend; CORS vive aqui.
     ├── catalog-api/     # Productos — Spring Boot, PostgreSQL (catalog-db, :5433), puerto 8080.
     │                    # Consume order-events de Kafka y descuenta stock (patron Inbox).
     ├── order-service/   # Pedidos — Spring Boot, PostgreSQL (order-db, :5434), puerto 8081.
@@ -48,15 +52,18 @@ microservices-lab/
 
 Kafka (KRaft, un solo broker) corre como parte del `docker-compose`, topic `order-events`.
 
-## Cómo correrlo (Fase 3)
+## Cómo correrlo (Fase 4)
 
-Backend completo (bases de datos + `catalog-api` + `order-service`, cada uno en su propio contenedor):
+Backend completo (bases de datos + los 5 servicios, cada uno en su propio contenedor):
 
 ```bash
 docker compose up -d --build
 ```
 
-`catalog-api`: `GET /api/products` (8080). `order-service`: `GET/POST /api/orders` (8081).
+Todo pasa por el gateway: `GET/POST http://localhost:8082/api/products`,
+`GET/POST http://localhost:8082/api/orders`. `catalog-api` (8080) y `order-service` (8081) siguen
+publicados por comodidad de depuración, pero el frontend y cualquier cliente externo deberían
+usar solo el gateway.
 
 Alternativa para desarrollar un servicio suelto sin reconstruir su imagen: levanta solo su base
 (`docker compose up -d catalog-db`) y corre el servicio con `./mvnw spring-boot:run` desde
@@ -72,5 +79,6 @@ npm install
 npm start
 ```
 
-Corre en `http://localhost:4200` y consume el backend directamente
-(CORS habilitado en `catalog-api` para `http://localhost:4200`).
+Corre en `http://localhost:4200` y consume el backend a través del gateway
+(`http://localhost:8082`); el CORS para `http://localhost:4200` está configurado ahí, no en los
+microservicios individuales.

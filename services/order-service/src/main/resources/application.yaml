@@ -11,5 +11,9 @@ spring:
     hibernate:
       ddl-auto: update
 
+feign:
+  circuitbreaker:
+    enabled: true
+
 server:
   port: 8081

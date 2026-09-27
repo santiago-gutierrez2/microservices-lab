@@ -60,6 +60,21 @@ services:
       - eureka-server
       - config-server
 
+  gateway:
+    container_name: gateway
+    build:
+      context: ./services/gateway
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_CONFIG_IMPORT: optional:configserver:http://config-server:8888
+    ports:
+      - "8082:8082"
+    depends_on:
+      - catalog-api
+      - order-api
+      - eureka-server
+      - config-server
+
   eureka-server:
     container_name: eureka-server
     build:

@@ -24,8 +24,10 @@ este mismo repositorio.
       MVC, servlet, no reactiva) enruta por nombre de servicio vía Eureka
       (`lb://`); CORS centralizado ahí; el frontend ya solo conoce el
       Gateway.
-- [ ] **Fase 5 — Resiliencia**: Resilience4j (circuit breaker, retry,
-      rate limiter).
+- [x] **Fase 5 — Resiliencia**: timeout + retry + circuit breaker
+      (Resilience4j) en la llamada Feign de `order-service` a
+      `catalog-api`; `fallbackFactory` distingue un 404 de negocio de una
+      indisponibilidad real.
 - [ ] **Fase 6 — Observabilidad**: trazabilidad distribuida, métricas,
       logs centralizados.
 - [ ] **Fase 7 — Seguridad**: OAuth2/JWT validado en el Gateway.

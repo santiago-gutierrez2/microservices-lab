@@ -4,8 +4,8 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { OrderList } from './order-list';
 import { environment } from '../../../../environments/environment';
 
-const PRODUCTS_URL = `${environment.catalogApiUrl}/products`;
-const ORDERS_URL = `${environment.orderApiUrl}/orders`;
+const PRODUCTS_URL = `${environment.apiBaseUrl}/products`;
+const ORDERS_URL = `${environment.apiBaseUrl}/orders`;
 
 const products = [
   { id: 1, name: 'Teclado mecánico', description: '', price: 59.99, stock: 25 },

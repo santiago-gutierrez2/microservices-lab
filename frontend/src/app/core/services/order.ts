@@ -7,7 +7,7 @@ import { Order, OrderRequest } from '../models/order.model';
 @Service()
 export class OrderService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl: string = `${environment.orderApiUrl}/orders`;
+  private readonly baseUrl: string = `${environment.apiBaseUrl}/orders`;
 
   findAll(): Observable<Order[]> {
     return this.http.get<Order[]>(this.baseUrl);

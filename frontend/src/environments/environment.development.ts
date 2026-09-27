@@ -1,5 +1,4 @@
 
 export const environment = {
-  catalogApiUrl: 'http://localhost:8080/api',
-  orderApiUrl: 'http://localhost:8081/api',
+  apiBaseUrl: 'http://localhost:8082/api',
 };

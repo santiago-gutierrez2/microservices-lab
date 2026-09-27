@@ -1,8 +1,8 @@
 <section class="orders">
   <h1>Pedidos</h1>
   <p class="hint">
-    Pedidos de <code>order-service</code> (<code>localhost:8081</code>); los nombres de producto
-    se cruzan en el navegador con <code>catalog-service</code> (<code>localhost:8080</code>).
+    Pedidos de <code>order-service</code>, vía el API Gateway (<code>localhost:8082</code>); los
+    nombres de producto se cruzan en el navegador con lo que devuelve <code>catalog-api</code>.
   </p>
 
   @if (productsError(); as message) {

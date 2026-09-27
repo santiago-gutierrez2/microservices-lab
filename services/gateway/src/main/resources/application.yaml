@@ -3,8 +3,24 @@ spring:
     name: gateway
   config:
     import: optional:configserver:http://localhost:8888
+  cloud:
+    gateway:
+      server:
+        webmvc:
+          routes:
+            - id: catalog-api
+              uri: lb://catalog-api
+              predicates:
+                - name: Path
+                  args:
+                    pattern: /api/products/**
+            - id: order-service
+              uri: lb://order-service
+              predicates:
+                - name: Path
+                  args:
+                    pattern: /api/orders/**
 
 server:
   port: 8082
 
-# Las rutas (spring.cloud.gateway.server.webmvc.routes) van aqui.

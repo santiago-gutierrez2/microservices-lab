@@ -20,7 +20,7 @@ describe('OrderService', () => {
 
   it('findAll should GET the orders endpoint of order-service', () => {
     service.findAll().subscribe();
-    const req = http.expectOne(`${environment.orderApiUrl}/orders`);
+    const req = http.expectOne(`${environment.apiBaseUrl}/orders`);
     expect(req.request.method).toBe('GET');
     req.flush([]);
   });
@@ -28,7 +28,7 @@ describe('OrderService', () => {
   it('create should POST the request body to order-service', () => {
     const body = { productId: 1, quantity: 2, unitPrice: 59.99 };
     service.create(body).subscribe();
-    const req = http.expectOne(`${environment.orderApiUrl}/orders`);
+    const req = http.expectOne(`${environment.apiBaseUrl}/orders`);
     expect(req.request.method).toBe('POST');
     expect(req.request.body).toEqual(body);
     req.flush({ id: 1, ...body, createdDate: '2026-09-20T17:18:58Z' });

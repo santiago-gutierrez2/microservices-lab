@@ -28,8 +28,10 @@ este mismo repositorio.
       (Resilience4j) en la llamada Feign de `order-service` a
       `catalog-api`; `fallbackFactory` distingue un 404 de negocio de una
       indisponibilidad real.
-- [ ] **Fase 6 — Observabilidad**: trazabilidad distribuida, métricas,
-      logs centralizados.
+- [x] **Fase 6 — Observabilidad**: trazabilidad distribuida (Micrometer
+      Tracing + Zipkin) para peticiones HTTP/Feign; correlación manual por
+      `eventId` (MDC) donde el trace se rompe (Outbox, relay `@Scheduled`,
+      consumidor de Kafka).
 - [ ] **Fase 7 — Seguridad**: OAuth2/JWT validado en el Gateway.
 - [ ] **Fase 8 — Despliegue**: Docker Compose completo y migración a
       Kubernetes.

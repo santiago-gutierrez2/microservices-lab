@@ -11,3 +11,13 @@ eureka:
 spring:
   kafka:
     bootstrap-servers: localhost:9092
+
+management:
+  tracing:
+    sampling:
+      # 1.0 = traza el 100% de las peticiones. En producción real, con
+      # volumen alto, esto se baja (ej. 0.1) para no saturar Zipkin.
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: http://localhost:9411/api/v2/spans

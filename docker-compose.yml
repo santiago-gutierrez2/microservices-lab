@@ -40,6 +40,7 @@ services:
       - kafka
       - eureka-server
       - config-server
+      - zipkin
 
   order-api:
     container_name: order-api
@@ -59,6 +60,7 @@ services:
       - kafka
       - eureka-server
       - config-server
+      - zipkin
 
   gateway:
     container_name: gateway
@@ -74,6 +76,7 @@ services:
       - order-api
       - eureka-server
       - config-server
+      - zipkin
 
   eureka-server:
     container_name: eureka-server
@@ -92,6 +95,12 @@ services:
       - ./config-repo:/config-repo:ro
     ports:
       - "8888:8888"
+
+  zipkin:
+    image: openzipkin/zipkin:latest
+    container_name: zipkin
+    ports:
+      - "9411:9411"
 
   kafka:
     image: apache/kafka:latest

@@ -33,5 +33,12 @@ resilience4j:
         wait-duration-in-open-state: 10s
         permitted-number-of-calls-in-half-open-state: 3
 
+logging:
+  pattern:
+    # El patron de correlacion (traceId/spanId) lo pone Spring Boot solo;
+    # aqui solo le añadimos eventId, el identificador de negocio para
+    # correlacion manual a traves del Outbox/Kafka.
+    correlation: "[%X{traceId:-},%X{spanId:-},%X{eventId:-}] "
+
 server:
   port: 8081

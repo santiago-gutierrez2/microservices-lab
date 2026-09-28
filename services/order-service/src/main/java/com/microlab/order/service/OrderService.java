@@ -9,6 +9,8 @@ import com.microlab.order.repository.OutboxEventRepository;
 import com.microlab.order.service.input.OrderRequest;
 import com.microlab.order.service.output.OrderCreatedEvent;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tools.jackson.databind.ObjectMapper;
@@ -20,6 +22,7 @@ import java.util.UUID;
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class OrderService {
 
     private final OrderRepository repository;
@@ -52,11 +55,19 @@ public class OrderService {
 
         OutboxEvent outboxEvent = new OutboxEvent();
         outboxEvent.setEventType("OrderCreated");
-        outboxEvent.setPayload(objectMapper.writeValueAsString(
-                new OrderCreatedEvent(UUID.randomUUID(), created.getId(), created.getProductId(), created.getQuantity())));
-        // Misma transaccion que el save de arriba: o se guardan las dos filas, o ninguna.
-        outboxEventRepository.save(outboxEvent);
+        UUID eventId = UUID.randomUUID();
+        try {
+            MDC.put("eventId", eventId.toString());
+            log.info("Pedido {} creado (producto {}, cantidad {}); generando evento OrderCreated",
+                    created.getId(), created.getProductId(), created.getQuantity());
+            outboxEvent.setPayload(objectMapper.writeValueAsString(
+                    new OrderCreatedEvent(eventId, created.getId(), created.getProductId(), created.getQuantity())));
+            // Misma transaccion que el save de arriba: o se guardan las dos filas, o ninguna.
+            outboxEventRepository.save(outboxEvent);
 
-        return created;
+            return created;
+        } finally {
+            MDC.clear();
+        }
     }
 }

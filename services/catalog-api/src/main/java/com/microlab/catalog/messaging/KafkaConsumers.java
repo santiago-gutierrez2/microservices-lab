@@ -6,6 +6,7 @@ import com.microlab.catalog.repository.ProcessedEventRepository;
 import com.microlab.catalog.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,24 +25,33 @@ public class KafkaConsumers {
     public void onOrderCreated(String payload) {
         OrderCreatedEvent event = objectMapper.readValue(payload, OrderCreatedEvent.class);
 
-        if (processedEventRepository.existsById(event.getEventId())) {
-            return;
+        try {
+            MDC.put("eventId", event.getEventId().toString());
+
+            if (processedEventRepository.existsById(event.getEventId())) {
+                return;
+            }
+
+            Product product = productRepository.findById(event.getProductId()).orElse(null);
+            if (product == null) {
+                log.warn("No product found with id {}", event.getProductId());
+                return;
+            }
+
+            product.setStock(product.getStock() - event.getQuantity());
+            productRepository.save(product);
+            log.info("Stock de producto {} descontado en {} (pedido {})",
+                    event.getProductId(), event.getQuantity(), event.getOrderId());
+
+            ProcessedEvent  processedEvent = new ProcessedEvent();
+            processedEvent.setEventType("order-event");
+            processedEvent.setEventId(event.getEventId());
+            processedEvent.setProductId(event.getProductId());
+            processedEvent.setOrderId(event.getOrderId());
+            processedEventRepository.save(processedEvent);
+
+        } finally {
+            MDC.clear();
         }
-
-        Product product = productRepository.findById(event.getProductId()).orElse(null);
-        if (product == null) {
-            log.warn("No product found with id {}", event.getProductId());
-            return;
-        }
-
-        product.setStock(product.getStock() - event.getQuantity());
-        productRepository.save(product);
-
-        ProcessedEvent  processedEvent = new ProcessedEvent();
-        processedEvent.setEventType("order-event");
-        processedEvent.setEventId(event.getEventId());
-        processedEvent.setProductId(event.getProductId());
-        processedEvent.setOrderId(event.getOrderId());
-        processedEventRepository.save(processedEvent);
     }
 }

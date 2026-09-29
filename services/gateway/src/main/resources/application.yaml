@@ -20,6 +20,11 @@ spring:
                 - name: Path
                   args:
                     pattern: /api/orders/**
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://localhost:9000/oauth2/jwks
 
 server:
   port: 8082

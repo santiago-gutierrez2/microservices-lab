@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: auth-server
+  security:
+    oauth2:
+      authorizationserver:
+        issuer: http://localhost:9000
+        client:
+          angular-spa:
+            registration:
+              client-id: angular-spa
+              client-authentication-methods:
+                - none
+              authorization-grant-types:
+                - authorization_code
+                - refresh_token
+              redirect-uris:
+                - http://localhost:4200/callback
+              scopes:
+                - openid
+                - profile
+            require-proof-key: true
+            require-authorization-consent: false
+
+server:
+  port: 9000

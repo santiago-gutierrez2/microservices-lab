@@ -1,6 +1,12 @@
 <nav class="main-nav">
   <a routerLink="/products" routerLinkActive="active">Productos</a>
   <a routerLink="/orders" routerLinkActive="active">Pedidos</a>
+  <span class="spacer"></span>
+  @if (authService.isAuthenticated()) {
+    <button (click)="logout()">Salir</button>
+  } @else {
+    <button (click)="login()">Entrar</button>
+  }
 </nav>
 
 <router-outlet />

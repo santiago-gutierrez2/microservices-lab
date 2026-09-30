@@ -1,0 +1,67 @@
+# PersistentVolumeClaim: pide almacenamiento duradero al cluster, que
+# sobrevive aunque el Pod de Postgres muera y se recree en otro sitio.
+# Sin esto, cada vez que el Pod se recrea, los datos desaparecen (el
+# almacenamiento por defecto de un contenedor es efimero).
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: catalog-db-pvc
+  namespace: microservices-lab
+spec:
+  accessModes: [ "ReadWriteOnce" ]
+  resources:
+    requests:
+      storage: 1Gi
+---
+# Deployment: le dice a Kubernetes "quiero N replicas de este Pod, y si
+# una muere, recreala tu solo". Para una base de datos de una sola
+# instancia, con PVC alcanza; con varias replicas necesitarias un
+# StatefulSet (identidad de red y almacenamiento estables por replica),
+# el primitivo que se usa en produccion para bases de datos reales.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: catalog-db
+  namespace: microservices-lab
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: catalog-db
+  template:
+    metadata:
+      labels:
+        app: catalog-db
+    spec:
+      containers:
+        - name: catalog-db
+          image: postgres:16
+          ports:
+            - containerPort: 5432
+          envFrom:
+            - secretRef:
+                name: catalog-db-credentials
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: catalog-db-pvc
+---
+# Service: le da al Deployment un nombre DNS estable dentro del cluster
+# ("catalog-db", resoluble por cualquier Pod en el mismo namespace) y
+# reparte trafico entre las replicas vivas que coincidan con el selector.
+# ClusterIP (el tipo por defecto) = solo accesible dentro del cluster,
+# nunca desde fuera - correcto para una base de datos.
+apiVersion: v1
+kind: Service
+metadata:
+  name: catalog-db
+  namespace: microservices-lab
+spec:
+  selector:
+    app: catalog-db
+  ports:
+    - port: 5432
+      targetPort: 5432

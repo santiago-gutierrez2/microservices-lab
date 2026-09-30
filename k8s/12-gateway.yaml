@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway
+  namespace: microservices-lab
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gateway
+  template:
+    metadata:
+      labels:
+        app: gateway
+    spec:
+      containers:
+        - name: gateway
+          image: microservices-lab-gateway:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8082
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: docker
+            - name: SPRING_CONFIG_IMPORT
+              value: optional:configserver:http://config-server:8888
+            - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI
+              value: http://auth-server:9000/oauth2/jwks
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gateway
+  namespace: microservices-lab
+spec:
+  selector:
+    app: gateway
+  ports:
+    - port: 8082
+      targetPort: 8082
+---
+# Ingress: la puerta de entrada HTTP al cluster desde fuera. Necesita un
+# Ingress Controller corriendo (el addon "ingress" de minikube, que ya
+# habilitamos) para que este objeto declarativo se convierta en reglas de
+# enrutamiento reales. En un cluster de verdad, esto es lo que sustituye a
+# publicar puertos con "-p" en docker-compose.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: gateway-ingress
+  namespace: microservices-lab
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: gateway.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: gateway
+                port:
+                  number: 8082

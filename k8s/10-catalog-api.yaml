@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: catalog-api
+  namespace: microservices-lab
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: catalog-api
+  template:
+    metadata:
+      labels:
+        app: catalog-api
+    spec:
+      containers:
+        - name: catalog-api
+          image: microservices-lab-catalog-api:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: docker
+            - name: SPRING_CONFIG_IMPORT
+              value: optional:configserver:http://config-server:8888
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://catalog-db:5432/catalogdb
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: catalog-db-credentials
+                  key: POSTGRES_USER
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: catalog-db-credentials
+                  key: POSTGRES_PASSWORD
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: catalog-api
+  namespace: microservices-lab
+spec:
+  selector:
+    app: catalog-api
+  ports:
+    - port: 8080
+      targetPort: 8080

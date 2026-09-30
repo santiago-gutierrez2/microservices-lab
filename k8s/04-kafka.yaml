@@ -1,0 +1,75 @@
+# Un solo broker, igual que en docker-compose. Mismo nombre de Service
+# (kafka) que el container_name que ya usabamos, asi que KAFKA_LISTENERS
+# no cambia ni una letra respecto al docker-compose.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka
+  namespace: microservices-lab
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka
+  template:
+    metadata:
+      labels:
+        app: kafka
+    spec:
+      containers:
+        - name: kafka
+          image: apache/kafka:latest
+          ports:
+            - containerPort: 19092
+            - containerPort: 9092
+          env:
+            - name: KAFKA_NODE_ID
+              value: "1"
+            - name: KAFKA_PROCESS_ROLES
+              value: "broker,controller"
+            # A diferencia de docker-compose (donde "kafka" resolvia a la IP
+            # real del propio contenedor y por tanto se podia bindear), aqui
+            # "kafka" es la IP virtual del Service - solo sirve para que
+            # OTROS Pods se conecten, nunca para escuchar en ella. Hay que
+            # bindear en 0.0.0.0; ADVERTISED_LISTENERS (lo que los clientes
+            # usan para conectarse) si sigue siendo el nombre del Service.
+            - name: KAFKA_LISTENERS
+              value: "PLAINTEXT://0.0.0.0:19092,CONTROLLER://0.0.0.0:19093,PLAINTEXT_HOST://0.0.0.0:9092"
+            - name: KAFKA_ADVERTISED_LISTENERS
+              value: "PLAINTEXT://kafka:19092,PLAINTEXT_HOST://localhost:9092"
+            - name: KAFKA_LISTENER_SECURITY_PROTOCOL_MAP
+              value: "CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT"
+            # Para un solo nodo, el controller de Raft es el mismo proceso;
+            # que se autoconecte por localhost en vez de por el Service evita
+            # el problema de hairpin NAT (un Pod conectando a su propia IP
+            # virtual de Service, algo que no todas las redes de k8s manejan bien).
+            - name: KAFKA_CONTROLLER_QUORUM_VOTERS
+              value: "1@localhost:19093"
+            - name: KAFKA_CONTROLLER_LISTENER_NAMES
+              value: "CONTROLLER"
+            - name: KAFKA_INTER_BROKER_LISTENER_NAME
+              value: "PLAINTEXT"
+            - name: KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR
+              value: "1"
+            - name: KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR
+              value: "1"
+            - name: KAFKA_TRANSACTION_STATE_LOG_MIN_ISR
+              value: "1"
+            - name: KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS
+              value: "0"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka
+  namespace: microservices-lab
+spec:
+  selector:
+    app: kafka
+  ports:
+    - name: internal
+      port: 19092
+      targetPort: 19092
+    - name: host
+      port: 9092
+      targetPort: 9092

@@ -1,0 +1,47 @@
+# Equivalente al volumen de solo lectura que montabamos en docker-compose
+# (./config-repo:/config-repo:ro) - aqui la fuente es el ConfigMap en vez
+# de una carpeta del host.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: config-server
+  namespace: microservices-lab
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: config-server
+  template:
+    metadata:
+      labels:
+        app: config-server
+    spec:
+      containers:
+        - name: config-server
+          image: microservices-lab-config-server:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8888
+          env:
+            - name: CONFIG_REPO_PATH
+              value: /config-repo
+          volumeMounts:
+            - name: config-repo
+              mountPath: /config-repo
+              readOnly: true
+      volumes:
+        - name: config-repo
+          configMap:
+            name: config-repo
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: config-server
+  namespace: microservices-lab
+spec:
+  selector:
+    app: config-server
+  ports:
+    - port: 8888
+      targetPort: 8888

@@ -33,8 +33,9 @@ este mismo repositorio.
       `eventId` (MDC) donde el trace se rompe (Outbox, relay `@Scheduled`,
       consumidor de Kafka).
 - [ ] **Fase 7 — Seguridad**: OAuth2/JWT validado en el Gateway.
-- [ ] **Fase 8 — Despliegue**: Docker Compose completo y migración a
-      Kubernetes.
+- [x] **Fase 8 — Despliegue**: Docker Compose completo (ya existente) y
+      manifiestos de Kubernetes (`k8s/`) para Minikube — Deployments,
+      Services, Secrets, PVCs, ConfigMap e Ingress para los 10 componentes.
 
 ## Estructura
 

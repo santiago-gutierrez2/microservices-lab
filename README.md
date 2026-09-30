@@ -32,7 +32,7 @@ este mismo repositorio.
       Tracing + Zipkin) para peticiones HTTP/Feign; correlación manual por
       `eventId` (MDC) donde el trace se rompe (Outbox, relay `@Scheduled`,
       consumidor de Kafka).
-- [ ] **Fase 7 — Seguridad**: OAuth2/JWT validado en el Gateway.
+- [x] **Fase 7 — Seguridad**: OAuth2/JWT validado en el Gateway.
 - [x] **Fase 8 — Despliegue**: Docker Compose completo (ya existente) y
       manifiestos de Kubernetes (`k8s/`) para Minikube — Deployments,
       Services, Secrets, PVCs, ConfigMap e Ingress para los 10 componentes.
